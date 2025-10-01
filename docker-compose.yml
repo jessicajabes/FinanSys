@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+
+  postgres:
+
+    image: postgres:15-alpine
+
+    container_name: finansys-bd
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    ports:
+      - "${POSTGRES_PORT}:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+
+
+    networks:
+      - finansys-network
+
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s # Verificar a cada 10 segundos
+      timeout: 5s # Timeout de 5 segundos
+      retries: 5 # Tentar 5 vezes antes de considerar falha
+
+
+  server:
+
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev 
+
+    container_name: finansys-server
+
+    environment:
+        NODE_ENV: development
+        PORT: ${SERVER_PORT}
+        DB_HOST: postgres
+        DB_PORT: ${POSTGRES_PORT}
+        DB_NAME: ${POSTGRES_DB}
+        DB_USER: ${POSTGRES_USER}
+        DB_PASSWORD: ${POSTGRES_PASSWORD}
+        JWT_SECRET: ${JWT_SECRET}
+        CORS_ORIGIN: ${CORS_ORIGIN}
+
+    ports:
+      - "${SERVER_PORT}:5000"
+
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    networks:
+      - finansys-network
+
+    restart: unless-stopped
+
+    command: npm run dev
+
+volumes:
+  postgres_data:
+
+networks:
+  finansys-network:
+    driver: bridge
+
+
