@@ -1,0 +1,23 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+RUN npm install -g @vitejs/plugin-react
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN chown -R node:node /app
+
+EXPOSE ${CLIENT_PORT}
+
+EXPOSE ${CLIENT_PORT2}
+
+USER node
+
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
+

@@ -58,7 +58,7 @@ services:
 
     volumes:
       - ./server:/app
-      - /app/node_modules
+      - server_node_modules:/app/node_modules
 
     depends_on:
       postgres:
@@ -68,11 +68,41 @@ services:
       - finansys-network
 
     restart: unless-stopped
+  client:
+    build:
+      context: ./my-react-app
+      dockerfile: Dockerfile.dev 
 
-    command: npm run dev
+    container_name: finansys-client
+
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+      VITE_APP_NAME: ${VITE_APP_NAME}
+      VITE_APP_VERSION: ${VITE_APP_VERSION}
+      VITE_APP_ENVIRONMENT: ${VITE_APP_ENVIRONMENT}
+
+    ports:
+      - "${CLIENT_PORT}:5173"
+
+    volumes:
+      - ./my-react-app:/app # Hot reload para desenvolvimento
+      - client_node_modules:/app/node_modules # Preservar node_modules
+
+    depends_on:
+      - server
+
+    networks:
+      - finansys-network
+
+    restart: unless-stopped
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
+
 
 volumes:
   postgres_data:
+  client_node_modules:
+  server_node_modules:
 
 networks:
   finansys-network:
