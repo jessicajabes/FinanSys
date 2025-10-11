@@ -1,7 +1,7 @@
 import './styles.scss'
 
 interface ButtonProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
     type?: "button" | "submit" | "reset";
     disabled?: boolean;
     onClick?: () => void;
