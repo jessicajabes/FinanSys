@@ -3,6 +3,7 @@ dist/
 build/
 docs/
 .github/
+init.sql
 *.log
 .env
 .env.local

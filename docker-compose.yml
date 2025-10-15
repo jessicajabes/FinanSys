@@ -18,8 +18,7 @@ services:
 
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/init.sql:/docker-entrypoint-initdb.d/01-init.sql
-      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+      - ./database:/docker-entrypoint-initdb.d/:ro
 
 
     networks:
@@ -43,15 +42,15 @@ services:
     container_name: finansys-server
 
     environment:
-        NODE_ENV: development
-        PORT: ${SERVER_PORT}
-        DB_HOST: postgres
-        DB_PORT: ${POSTGRES_PORT}
-        DB_NAME: ${POSTGRES_DB}
-        DB_USER: ${POSTGRES_USER}
-        DB_PASSWORD: ${POSTGRES_PASSWORD}
-        JWT_SECRET: ${JWT_SECRET}
-        CORS_ORIGIN: ${CORS_ORIGIN}
+      NODE_ENV: development
+      PORT: ${SERVER_PORT}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGIN: ${CORS_ORIGIN}
 
     ports:
       - "${SERVER_PORT}:5000"
