@@ -6,9 +6,10 @@ interface FormsProps{
     title?: string
     onSubmit?: React.FormEventHandler<HTMLFormElement>
     titleButton?: string
+    disableButton?: boolean
 }
 
-export function Forms({children, title, onSubmit, titleButton}: FormsProps ){
+export function Forms({children, title, onSubmit, titleButton, disableButton}: FormsProps ){
     return(
         <div className='formContainer'>
 
@@ -18,7 +19,7 @@ export function Forms({children, title, onSubmit, titleButton}: FormsProps ){
 
                 {children}
                 
-                <Button type="submit">{titleButton}</Button>
+                <Button type="submit" disabled={disableButton}>{titleButton}</Button>
 
             </form>
         </div>
