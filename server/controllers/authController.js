@@ -83,12 +83,19 @@ const register = async (req, res) => {
 }
 
 const login = async (req, res) => {
+    let client;
     try{
-        const { login: loginField, password } = req.body
+        const { login: loginfield, password } = req.body
 
-        const query = `SELECT id FROM users WHERE username = $1 OR email = $1`
+        console.log('Tentativa de login recebida:', { loginfield, hasPassword: !!password })
 
-        const result = await db.query(query, [loginField])
+        client = await db.pool.connect();
+
+        const query = `SELECT id, username, password_hash FROM users WHERE username = $1 OR email = $1`
+
+        const result = await client.query(query, [loginfield])
+
+        console.log('Resultado da query de login, rows:', result.rows.length)
 
         if (result.rows.length === 0){
             return res.status(401).json({
@@ -99,9 +106,12 @@ const login = async (req, res) => {
 
         const user = result.rows[0]
 
-        const PasswordVerification = await bcrypt.compare(password, user.passwordHash)
+    console.log('Usuário encontrado:', { id: user?.id, username: user?.username })
+    console.log('Password hash (prefix):', user?.password_hash ? user.password_hash.slice(0, 16) : null)
 
-            if (!PasswordVerification){
+        const PasswordVerification = await bcrypt.compare(password, user.password_hash)
+
+        if (!PasswordVerification){
             return res.status(401).json({
                 error: 'Credenciais inválidas',
                 message: 'Usuário ou senha incorretos.'
@@ -125,6 +135,8 @@ const login = async (req, res) => {
             error: 'Erro interno do servidor',
             message: 'Não foi possível realizar o login'
         })
+    } finally {
+        if (client) try { await client.release() } catch(e){}
     }
 }
 

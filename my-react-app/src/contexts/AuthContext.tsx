@@ -30,6 +30,7 @@ interface SignUpData {
   data_nascimento?: string;
 }
 
+
 const AuthContext = createContext<AuthContextData | null>(null);
 
 interface AuthProviderProps {
@@ -40,12 +41,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+  //  const [theme, setTheme] = useState<string>('moon');
 
     useEffect(() => {
         async function loadStorageData(){
             try{
                 const storedToken = localStorage.getItem('token');
                 const storedUser = localStorage.getItem('user');
+
 
                 if(storedToken && storedUser){
                     setToken(storedToken);
@@ -75,8 +78,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         loadStorageData();
     }, []);
 
+
     async function signIn(login: string, password: string): Promise<boolean>{
         try{
+
             const response = await api.post('/auth/login', { login, password });
 
             if (response.data.token && response.data.user) {
@@ -153,7 +158,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         signed: !!user && !!token,
         signIn,
         signUp,
-        signOut
+        signOut,
     };
 
     return (
