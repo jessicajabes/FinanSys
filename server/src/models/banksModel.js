@@ -69,7 +69,7 @@ async function update(id, patch) {
 
     const allowed = ['user_id', 'balance', 'description', 'created_by', 'updated_by']
     const safeKeys = keys.filter(k => allowed.includes(k))
-    if (keys.length === 0) return findById(id)
+    if (safeKeys.length === 0) return findById(id)
 
     const sets = safeKeys.map((k, i) => `${k} = $${i + 2}`).join(', ')
     const values = safeKeys.map(k => patch[k])
