@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import db from '../config/database.js'
+import userModel from '../models/userModel.js'
 import bcrypt from 'bcryptjs';
 
-// Gera JWT com claim userId
 const generateToken = (userId) => {
     return jwt.sign(
         { userId },
@@ -12,12 +12,7 @@ const generateToken = (userId) => {
 }
 
 const checkUserExists = async (username, email) => {
-    const query = `
-        SELECT username, email FROM users
-        WHERE username = $1 OR email = $2`
-
-    const result = await db.query(query, [username, email])
-    return result.rows
+    return await userModel.findByUsernameOrEmail(username, email)
 }
 
 const register = async (req, res) => {
@@ -30,28 +25,30 @@ const register = async (req, res) => {
       return res.status(400).json({ error: 'username, email e password são obrigatórios' })
     }
 
-    const existingUsers = await checkUserExists(username, email)
-    if (existingUsers.length > 0) {
-      return res.status(409).json({ error: 'Username ou email já cadastrado' })
-    }
+        const existingUsers = await checkUserExists(username, email)
+        if (existingUsers.length > 0) {
+            return res.status(409).json({ error: 'Username ou email já cadastrado' })
+        }
 
     const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '12', 10)
     const passwordHash = await bcrypt.hash(password, saltRounds)
+
 
     const client = await db.pool.connect()
 
     try{
         await client.query('BEGIN')
 
-        const userQuery = `INSERT INTO users (username, password_hash, nome, telefone, email, data_nascimento)
-        VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING id, username, nome, telefone, email, data_nascimento, created_at`
-
-        const userResult = await client.query(userQuery, [username, passwordHash, nome || null, telefone || null, email, data_nascimento || null])
-        const newUser = userResult.rows[0]
+        const newUser = await userModel.create(client, {
+          username,
+          password_hash: passwordHash,
+          nome: nome || '',
+          telefone: telefone || null,
+          email,
+          data_nascimento: data_nascimento || null,
+        })
 
         await client.query('COMMIT')
-
         const token = generateToken(newUser.id)
 
         return res.status(201).json({
@@ -87,27 +84,16 @@ const login = async (req, res) => {
     try{
         const { login: loginfield, password } = req.body
 
-        console.log('Tentativa de login recebida:', { loginfield, hasPassword: !!password })
+    client = await db.pool.connect();
 
-        client = await db.pool.connect();
+        const user = await userModel.findByLogin(loginfield)
 
-        const query = `SELECT id, username, password_hash FROM users WHERE username = $1 OR email = $1`
-
-        const result = await client.query(query, [loginfield])
-
-        console.log('Resultado da query de login, rows:', result.rows.length)
-
-        if (result.rows.length === 0){
+        if (!user){
             return res.status(401).json({
                 error: 'Credenciais inválidas',
                 message: 'Usuário ou senha incorretos.'
             })
         }
-
-        const user = result.rows[0]
-
-    console.log('Usuário encontrado:', { id: user?.id, username: user?.username })
-    console.log('Password hash (prefix):', user?.password_hash ? user.password_hash.slice(0, 16) : null)
 
         const PasswordVerification = await bcrypt.compare(password, user.password_hash)
 
