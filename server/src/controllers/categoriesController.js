@@ -41,6 +41,35 @@ const getById = async (req,res) => {
     }
 }
 
+const update = async (req, res) => {
+    try {
+        const id = Number(req.params.id)
+        if(!id) return res.status(400).json({ error: 'ID inválido' })
+        const patch = req.body || {}
+        const updated = await categoriesModel.update(id, patch)
+        if (!updated) return res.status(404).json({ error: 'Banco não encontrado' })
+        return res.json({
+            message: 'Banco atualizado com sucesso',
+            categorie: updated
+    })
+    } catch (error) {
+        console.error('Erro ao atualiza banco:', error)
+        return res.status(500).res.json({ error: 'Erro interno do serevidor' })
+    }
+}
+
+const remove = async (req, res) => {
+    try{
+        const id = Number(req.params.id)
+        if (!id) return res.status(400).json({ error: 'ID inválido' })
+        await categoriesModel.remove(id)
+        return res.status(204).send()
+    }catch(error){
+        console.error('Erro ao remover categoria: ', error)
+        return res.status(500).json({ error: 'Erro interno do servidor' })
+    }
+}
+
 export default{
     create,
     update,
