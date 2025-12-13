@@ -68,7 +68,7 @@
   }
   
   
-  :root[data-theme='light'] {
+  :root[data-theme='sun'] {
 
     --gray-100: #14532d; /* Verde mais escuro no tema claro */
     --gray-200: #166534; /* Verde muito escuro */
