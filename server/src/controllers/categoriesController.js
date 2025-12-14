@@ -1,5 +1,4 @@
 import db from '../config/database.js'
-import banksModel from '../models/banksModel.js'
 import categoriesModel from '../models/categoriesModel.js'
 
 const create = async (req, res) => {
@@ -32,7 +31,7 @@ const getById = async (req,res) => {
         const rawId = req.params.id ?? req.query.id
         const id = Number(rawId)
         if (!id) return res.status(400).json({ error: 'ID inválido' })
-        const categorie = await categoriesModelModel.findById(id)
+        const categorie = await categoriesModel.findById(id)
         if (!categorie) return res.status(404).json({ error: 'Categoria não encontrada' })
         return res.json({ categorie })
     }catch (error){
@@ -47,14 +46,11 @@ const update = async (req, res) => {
         if(!id) return res.status(400).json({ error: 'ID inválido' })
         const patch = req.body || {}
         const updated = await categoriesModel.update(id, patch)
-        if (!updated) return res.status(404).json({ error: 'Banco não encontrado' })
-        return res.json({
-            message: 'Banco atualizado com sucesso',
-            categorie: updated
-    })
+        if (!updated) return res.status(404).json({ error: 'Categoria não encontrada' })
+        return res.json({ message: 'Categoria atualizada com sucesso', categorie: updated })
     } catch (error) {
-        console.error('Erro ao atualiza banco:', error)
-        return res.status(500).res.json({ error: 'Erro interno do serevidor' })
+        console.error('Erro ao atualizar categoria:', error)
+        return res.status(500).json({ error: 'Erro interno do servidor' })
     }
 }
 

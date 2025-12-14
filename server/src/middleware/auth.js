@@ -4,7 +4,8 @@ import db from '../config/database.js'
 const authenticateToken = async (req, res, next) => {
     try{
 
-        const authHeader = req.headers['authotization']
+
+    const authHeader = req.headers['authorization'] || req.headers['Authorization']
         const token = authHeader && authHeader.split(' ')[1]
 
         if(!token) {
@@ -13,7 +14,7 @@ const authenticateToken = async (req, res, next) => {
             })
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret')
 
         const query = `SELECT id, username, nome, telefone, email, data_nascimento, created_at FROM users WHERE id = $1`
 

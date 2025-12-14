@@ -1,10 +1,13 @@
 import express from 'express'
 import bankController from '../controllers/bankController.js'
+import authenticateToken from '../middleware/auth.js'
 
 const router = express.Router();
 
-router.post('/bank', bankController.create)
+// proteger todas as rotas de bank
+router.use(authenticateToken);
 
+router.post('/bank', bankController.create)
 router.get('/bank', bankController.getById)
 router.get('/bank/:id', bankController.getById)
 router.put('/bank/:id', bankController.update)

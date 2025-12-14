@@ -69,6 +69,14 @@ async function findByLogin(login) {
   return rows[0] || null
 }
 
+async function findByIdWithHash(id) {
+  const { rows } = await db.query(
+    'SELECT id, username, password_hash, nome, telefone, email, data_nascimento, created_at, updated_at FROM users WHERE id = $1',
+    [id]
+  )
+  return mapRowWithHash(rows[0])
+}
+
 async function create(clientOrData, maybeData) {
   let client = null
   let data = null
@@ -101,7 +109,7 @@ async function update(id, patch) {
   if (keys.length === 0) return findById(id)
 
 
-  const allowed = ['username', 'nome', 'telefone', 'email', 'data_nascimento']
+  const allowed = ['username', 'nome', 'telefone', 'email', 'data_nascimento', 'password_hash']
   const safeKeys = keys.filter(k => allowed.includes(k))
 
   if (safeKeys.length === 0) return findById(id)
@@ -124,6 +132,7 @@ export default {
   mapRowWithHash,
 
   findById,
+  findByIdWithHash,
   findByEmail,
   findByUsernameOrEmail,
   findByLogin,

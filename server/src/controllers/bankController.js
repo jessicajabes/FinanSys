@@ -37,7 +37,7 @@ const create = async (req, res) => {
 
     const getById = async (req, res) => {
         try {
-            // accept id either as route param (/bank/:id) or query string (?id=)
+
             const rawId = req.params.id ?? req.query.id
             const id = Number(rawId)
             if (!id) return res.status(400).json({ error: 'ID inválido' })

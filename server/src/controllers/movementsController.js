@@ -1,4 +1,4 @@
-import db from '../config/database'
+import db from '../config/database.js'
 import movementsModel from '../models/movementsModel.js'
 
 const create = async (req, res) => {
