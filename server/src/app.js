@@ -7,6 +7,7 @@ import banksRoutes from './routes/banksRoutes.js'
 import categoriesRoutes from './routes/categoriesRoutes.js'
 import movementssRoutes from './routes/movementsRoutes.js'
 import transactionsRoutes from './routes/transactionsRoutes.js'
+import cardsRoutes from './routes/cardsRoutes.js'
 
 
 dotenv.config();
@@ -36,6 +37,7 @@ app.use((req, res, next) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', banksRoutes);
 app.use('/api/auth', categoriesRoutes);
+app.use('/api/auth', cardsRoutes);
 app.use('/api/auth', movementssRoutes);
 app.use('/api/auth', transactionsRoutes);
 

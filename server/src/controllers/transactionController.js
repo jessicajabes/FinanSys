@@ -1,4 +1,4 @@
-import db from '../config/database'
+import db from '../config/database.js'
 import transactionsModel  from '../models/transactionsModel.js'
 
 const create = async (req,res)=>{
@@ -26,6 +26,17 @@ const getById = async (req,res)=>{
         if(!id) return res.status(400).json({ error: 'ID inválido'})
         
         const transaction = await transactionsModel.findById(id)
+        if(!transaction) return res.status(404).json({ error:'Transação não encontratada' }) 
+        return res.status(200).json({ transaction })
+    }catch (error){
+        console.error('Erro ao buscar transação', error)
+        return res.status(500).json({ error:'Erro interno do servidor' })
+    }
+}
+
+const get = async (req,res)=>{
+    try{ 
+        const transaction = await transactionsModel.find()
         if(!transaction) return res.status(404).json({ error:'Transação não encontratada' }) 
         return res.status(200).json({ transaction })
     }catch (error){
@@ -69,4 +80,5 @@ export default{
     getById,
     update,
     remove,
+    get,
 }

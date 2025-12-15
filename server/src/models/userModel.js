@@ -45,6 +45,13 @@ async function findById(id) {
   return mapRowToPublic(rows[0])
 }
 
+async function find() {
+  const { rows } = await db.query(
+    'SELECT id, username, nome, telefone, email, data_nascimento, created_at, updated_at FROM users'
+  )
+  return rows.map(mapRowToPublic)
+}
+
 async function findByEmail(email) {
   const { rows } = await db.query(
     'SELECT id, username, nome, telefone, email, password_hash FROM users WHERE email = $1',
@@ -130,7 +137,7 @@ export default {
 
   mapRowToPublic,
   mapRowWithHash,
-
+  find,
   findById,
   findByIdWithHash,
   findByEmail,

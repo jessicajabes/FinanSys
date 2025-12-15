@@ -16,9 +16,12 @@ const authenticateToken = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret')
 
+        // aceitar variações no nome do claim: userId | userID | id
+        const userId = decoded.userId || decoded.userID || decoded.id
+
         const query = `SELECT id, username, nome, telefone, email, data_nascimento, created_at FROM users WHERE id = $1`
 
-        const result = await db.query(query, [decoded.userId])
+        const result = await db.query(query, [userId])
 
         if(result.rows.length === 0){
             return res.status(401).json({
@@ -59,6 +62,4 @@ const authenticateToken = async (req, res, next) => {
     }
 }
 
-export {
-    authenticateToken
-}
+export default authenticateToken

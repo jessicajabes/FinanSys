@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);
+router.get('/user', authController.get);
 router.get('/user/:id', authController.getById);
 
 router.use(authenticateToken);

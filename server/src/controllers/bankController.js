@@ -50,6 +50,18 @@ const create = async (req, res) => {
         }
     }
 
+    const get = async (req, res) => {
+        try {
+
+            const bank = await banksModel.find()
+            if (!bank) return res.status(404).json({ error: 'Banco não encontrado' })
+            return res.json({ bank })
+        } catch (error) {
+            console.error('Erro ao buscar banco:', error)
+            return res.status(500).json({ error: 'Erro interno do servidor' })
+        }
+    }
+
     const update = async (req, res) => {
         try {
             const id = Number(req.params.id)
@@ -85,4 +97,5 @@ export default{
         update,
         getById,
         remove,
+        get,
 }

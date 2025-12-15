@@ -37,6 +37,13 @@ async function findById(id) {
     return MapRowToPublic(rows[0])
 }
 
+async function find() {
+    const { rows } = await db.query(
+        'SELECT id, user_id, balance, description, created_at, created_by, updated_at, updated_by FROM banks'
+    )
+    return rows.map(MapRowToPublic)
+}
+
 async function create(clientOrData, maybeData){
     let client = null
     let data = null
@@ -88,4 +95,5 @@ export default{
     create,
     update, 
     remove,
+    find,
 }

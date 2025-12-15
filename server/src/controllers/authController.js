@@ -139,6 +139,19 @@ const getById = async(req,res)=>{
     }
 }
 
+const get = async(req,res)=>{
+    try{      
+        const user = await userModel.find()
+
+        return res.status(200).json({
+            user: user
+        })
+    }catch ( error ){
+        console.error('Erro ao buscar usuários ', error)
+        res.status(500).json({ error:'Erro interno do servidor'})
+    }
+}
+
 const remove = async(req,res)=>{
     try{
         const rawId = req.params.id || req.query.id
@@ -171,19 +184,15 @@ const update = async (req, res) => {
             const userWithHash = await userModel.findByIdWithHash(id)
             if (!userWithHash) return res.status(404).json({ error: 'Usuário não encontrado' })
 
-            // authorization: only the authenticated user may update their own profile
             if (!req.user || req.user.id !== id) {
                 return res.status(403).json({ error: 'Acesso negado: só é possível atualizar seu próprio perfil' })
             }
 
-            // verify current password for any change
             const passwordOk = await bcrypt.compare(currentPassword, userWithHash.password_hash)
             if (!passwordOk) return res.status(401).json({ error: 'Senha atual inválida' })
 
-            // prepare patch from body (shallow copy)
             const patch = { ...body }
 
-            // check email uniqueness if changing
             const newEmail = body.email
             if (newEmail && newEmail !== userWithHash.email) {
                 const existing = await userModel.findByEmail(newEmail)
@@ -192,7 +201,6 @@ const update = async (req, res) => {
                 }
             }
 
-            // handle password change (client sends `password` as new password)
             if (patch.password) {
                 const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '12', 10)
                 const newHash = await bcrypt.hash(patch.password, saltRounds)
@@ -200,7 +208,6 @@ const update = async (req, res) => {
                 delete patch.password
             }
 
-            // remove fields we don't want to store directly
             delete patch.current_password
 
             const updated = await userModel.update(id, patch)
@@ -219,4 +226,5 @@ export default {
     getById,
     update,
     remove,
+    get,
 }

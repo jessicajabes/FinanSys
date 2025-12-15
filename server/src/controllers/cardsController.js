@@ -48,6 +48,21 @@ const getById = async(req, res) => {
     }
 }
 
+const get = async(req, res) => {
+    try{
+        const card = await cardsModel.find()
+        if(!card) return res.status(404).json({
+            error: "Cartão não encontrado"
+        })
+        return res.json({card})
+    } catch(error){
+        console.error('Erro ao buscar cartão', error)
+        return res.status(500).json({
+            error: "Erro interno do servidor"
+        })
+    }
+}
+
 const update = async(req,res)=>{
     try{
         const rawId = req.params.id
@@ -84,4 +99,5 @@ export default{
     update,
     getById,
     remove,
+    get,
 }

@@ -40,6 +40,17 @@ const getById = async (req,res) => {
     }
 }
 
+const get = async (req,res) => {
+    try{
+        const categorie = await categoriesModel.find()
+        if (!categorie) return res.status(404).json({ error: 'Categoria não encontrada' })
+        return res.json({ categorie })
+    }catch (error){
+        console.error('Erro ao buscar categoria', error)
+        return res.status(500).json({ error: 'Erro interno do servidor'})
+    }
+}
+
 const update = async (req, res) => {
     try {
         const id = Number(req.params.id)
@@ -70,5 +81,6 @@ export default{
     create,
     update,
     getById,
-    remove
+    remove,
+    get,
 }

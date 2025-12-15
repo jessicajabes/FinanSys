@@ -62,6 +62,19 @@ const getById = async (req, res) =>{
     }
 }
 
+const get = async (req, res) =>{
+    try{
+        const movement = await movementsModel.find()
+        if(!movement) return res.status(404).json({ error: 'Movimento não encontrado'})
+        return res.status(200).json({
+            movement: movement
+        })
+    }catch (error){
+        console.error('Erro ao buscar movimento', error)
+        return res.status(500).json({ error: ' Erro interno do servidor'})
+    }
+}
+
 const remove = async (req, res) => {
     try{
         const rawId = req.params.id || req.query.id
@@ -79,4 +92,5 @@ export default {
     update,
     getById,
     remove,
+    get,
 }

@@ -28,8 +28,13 @@ function MapRowToPublic(row){
 }
 
 async function findById(id){
-    const row = await db.query(`SELECT from categories WHERE id = $1 RETURNING id, name, type, created_by, updated_by, created_at, updated_at`, [id])
-    return MapRowToPublic(row[0])
+    const {rows} = await db.query(`SELECTid, name, type, created_by, updated_by, created_at, updated_at from categories WHERE id = $1 `, [id])
+    return MapRowToPublic(rows[0])
+}
+
+async function find(){
+    const {rows} = await db.query(`SELECT id, name, type, created_by, updated_by, created_at, updated_at from categories `)
+    return rows.map(MapRowToPublic)
 }
 
 async function create(clientOrData, maybeData) {
@@ -52,7 +57,7 @@ async function create(clientOrData, maybeData) {
     
     const result = client ? await client.query(sql, params) : await db.query(sql, params)
 
-    return MapRowToPublic(result.row[0])
+    return MapRowToPublic(result.rows[0])
 }
 
 async function update(id, patch){
@@ -66,9 +71,9 @@ async function update(id, patch){
     const values = safeKeys.map(k => patch[k])
 
     const sql = `UPDATE cards SET ${sets} WHERE id = $1 RETURNING id, name, type, created_by, updated_by, created_at, updated_at`
-    const { row } = await db.query(sql, [id, ...values])
+    const { rows } = await db.query(sql, [id, ...values])
 
-    return MapRowToPublic(row[0] || null)
+    return MapRowToPublic(rows[0] || null)
 }
 
 async function remove(id){
@@ -81,5 +86,6 @@ export default{
     create,
     update,
     remove,
+    find,
 
 }
