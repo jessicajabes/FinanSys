@@ -48,6 +48,21 @@ const getById = async(req, res) => {
     }
 }
 
+const get = async(req, res) => {
+    try{
+        const card = await cardsModel.find()
+        if(!card) return res.status(404).json({
+            error: "Cartão não encontrado"
+        })
+        return res.json({card})
+    } catch(error){
+        console.error('Erro ao buscar cartão', error)
+        return res.status(500).json({
+            error: "Erro interno do servidor"
+        })
+    }
+}
+
 const update = async(req,res)=>{
     try{
         const rawId = req.params.id
@@ -56,11 +71,9 @@ const update = async(req,res)=>{
             error: "Id inválido"
         })
         const patch = req.body || {}
-        const card = cardsModel.update(id, patch)
-        if(!card) res.status(404).json({
-            error: 'Banco não encontrado'
-        })
-        return res.json()
+        const card = await cardsModel.update(id, patch)
+        if(!card) return res.status(404).json({ error: 'Cartão não encontrado' })
+        return res.status(200).json({ message: 'Cartão atualizado com sucesso', card })
     }catch{
         console.error('Erro ao atualizar o cartão')
         res.status(500).json({
@@ -86,4 +99,5 @@ export default{
     update,
     getById,
     remove,
+    get,
 }

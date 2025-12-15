@@ -37,11 +37,23 @@ const create = async (req, res) => {
 
     const getById = async (req, res) => {
         try {
-            // accept id either as route param (/bank/:id) or query string (?id=)
+
             const rawId = req.params.id ?? req.query.id
             const id = Number(rawId)
             if (!id) return res.status(400).json({ error: 'ID inválido' })
             const bank = await banksModel.findById(id)
+            if (!bank) return res.status(404).json({ error: 'Banco não encontrado' })
+            return res.json({ bank })
+        } catch (error) {
+            console.error('Erro ao buscar banco:', error)
+            return res.status(500).json({ error: 'Erro interno do servidor' })
+        }
+    }
+
+    const get = async (req, res) => {
+        try {
+
+            const bank = await banksModel.find()
             if (!bank) return res.status(404).json({ error: 'Banco não encontrado' })
             return res.json({ bank })
         } catch (error) {
@@ -85,4 +97,5 @@ export default{
         update,
         getById,
         remove,
+        get,
 }

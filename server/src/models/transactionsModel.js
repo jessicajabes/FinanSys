@@ -46,10 +46,17 @@ function MapRowToPublic(row){
 }
 
 async function findById(id){
-    const sql = `SELECT id, user_id, category_id, bank_id, card_id, description, amount, transaction_type, fixed_variable, payment_method, start_date, end_date, created_at, created_by, updated_at, updated_by WHERE id=$1`
-    const { row } = await db.query(sql)
+    const sql = `SELECT id, user_id, category_id, bank_id, card_id, description, amount, transaction_type, fixed_variable, payment_method, start_date, end_date, created_at, created_by, updated_at, updated_by FROM transactions WHERE id=$1`
+    const { rows } = await db.query(sql, [id])
 
-    return MapRowToPublic(row[0])
+    return MapRowToPublic(rows[0])
+}
+
+async function find(){
+    const sql = `SELECT id, user_id, category_id, bank_id, card_id, description, amount, transaction_type, fixed_variable, payment_method, start_date, end_date, created_at, created_by, updated_at, updated_by FROM transactions`
+    const { rows } = await db.query(sql)
+
+    return rows.map(MapRowToPublic)
 }
 
 async function create(clientOrData, maybeData){
@@ -80,9 +87,9 @@ async function create(clientOrData, maybeData){
 
     const sql = `INSERT INTO transactions (user_id, category_id, bank_id, card_id, description, amount, transaction_type, fixed_variable, payment_method, start_date, end_date, created_by, updated_by) VALUES $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13 RETURNING id, user_id, category_id, bank_id, card_id, description, amount, transaction_type, fixed_variable, payment_method, start_date, end_date, created_at, created_by, updated_at, updated_by`
 
-    const { row } = await db.query(sql, params)
+    const { rows } = await db.query(sql, params)
 
-    return MapRowToPublic(row[0])
+    return MapRowToPublic(rows[0])
 }
 
 async function update(id, patch) {
@@ -97,9 +104,9 @@ async function update(id, patch) {
     const values = safeKeys.map(v => patch[v])
 
     const sql = `UPDATE transactions SET ${sets} WHERE id = $1 RETURNING id, user_id, category_id, bank_id, card_id, description, amount, transaction_type, fixed_variable, payment_method, start_date, end_date, created_at, created_by, updated_at, updated_by`
-    const { row } = await db.query(sql,[id, ...values])
+    const { rows } = await db.query(sql,[id, ...values])
 
-    return MapRowToPublic(row)
+    return MapRowToPublic(rows)
 }
 
 async function remove(id) {
@@ -112,4 +119,5 @@ export default{
     update,
     findById,
     remove,
+    find,
 }

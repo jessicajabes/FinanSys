@@ -1,11 +1,13 @@
 import express from 'express'
 import bankController from '../controllers/bankController.js'
+import authenticateToken from '../middleware/auth.js'
 
 const router = express.Router();
 
-router.post('/bank', bankController.create)
+router.use(authenticateToken);
 
-router.get('/bank', bankController.getById)
+router.post('/bank', bankController.create)
+router.get('/bank', bankController.get)
 router.get('/bank/:id', bankController.getById)
 router.put('/bank/:id', bankController.update)
 router.delete('/bank/:id', bankController.remove)
