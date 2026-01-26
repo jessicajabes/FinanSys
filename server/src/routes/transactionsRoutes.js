@@ -9,6 +9,7 @@ router.use(authenticateToken);
 router.post('/transaction', transactionController.create)
 router.get('/transaction', transactionController.get)
 router.get('/transaction/:id', transactionController.getById)
+router.get('/transaction_income/:id_user', transactionController.getIncomeByUser)
 router.put('/transaction/:id', transactionController.update)
 router.delete('/transaction/:id', transactionController.remove)
 

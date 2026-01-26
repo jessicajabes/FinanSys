@@ -26,6 +26,22 @@ const getById = async (req,res)=>{
     }
 }
 
+const getIncomeByUser = async (req, res) => {
+    try{
+        const rawId_user = req.params.id_user || req.query.id_user
+        const id_user = Number(rawId_user)
+        if(!id_user) return res.status(400).json({ error: 'ID in válido' })
+        
+        const transaction = await transactionsModel.findIncomeByUser(id_user)
+        if(!transaction) return res.status(404).json({ error: 'Transações não encontradas'})
+        return res.status(200).json({ transaction })
+
+    }catch(error){
+        console.error('Erro ao buscar os dados de receita por usuário', error)
+        return res.status(500).json({ error:'Erro interno do servidor' })
+    }
+}
+
 const get = async (req,res)=>{
     try{ 
         const transaction = await transactionsModel.find()
@@ -73,4 +89,5 @@ export default{
     update,
     remove,
     get,
+    getIncomeByUser,
 }
