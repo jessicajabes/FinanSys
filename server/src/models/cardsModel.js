@@ -9,7 +9,7 @@ import db from '../config/database.js'
  * - created_at (timestamp)
  * - created_by (FK de users(id)
  * - updated_at (timestamp)
- * - update_by (FK de users(id)
+ * - updated_by (FK de users(id)
 
 /**
  * @typedef {Object} CardsRow
@@ -57,11 +57,11 @@ async function create(clientOrData, maybeData){
     const description = data.description
     const bank_id = data.bank_id
     const created_by = data.created_by
-    const update_by = data.update_by
+    const updated_by = data.updated_by
 
-    const params = [user_id, description, bank_id, created_by, update_by]
+    const params = [user_id, description, bank_id, created_by, updated_by]
 
-    const query = `INSERT INTO cards (user_id, description, bank_id, created_by, update_by) VALUES ($1, $2, $3, $4, $5) RETURNING id, user_id, description, bank_id, created_by, update_by`
+    const query = `INSERT INTO cards (user_id, description, bank_id, created_by, updated_by) VALUES ($1, $2, $3, $4, $5) RETURNING id, user_id, description, bank_id, created_by, updated_by`
 
     const result = client ? await client.query(query, params) : await db.query(query, params)
     return MapRowToPublic(result.rows[0])
@@ -69,16 +69,16 @@ async function create(clientOrData, maybeData){
 
 async function update(id, patch){
     const keys = Object.keys(patch)
-    if (keys === 0) return findById(id)
+    if (keys.length === 0) return findById(id)
 
     const allowed = ['description', 'bank_id']
     const safeKeys = keys.filter(k => allowed.includes(k))
     if (safeKeys.length === 0) return findById(id)
 
     const sets = safeKeys.map((k,i) => `${k} = $${i + 2}`).join(', ')
-    const values = safeKeys.map(k => patch(k))
+    const values = safeKeys.map(k => patch[k])
 
-    const sql = `UPDATE cards SET ${sets} WHERE id = $1 RETURNING id, user_id, description, bank_id, created_by, update_by, created_at, update_at`
+    const sql = `UPDATE cards SET ${sets} WHERE id = $1 RETURNING id, user_id, description, bank_id, created_by, updated_by, created_at, updated_at`
     const { rows } = await db.query(sql, [id, ...values])
 
     return MapRowToPublic(rows[0] || null)

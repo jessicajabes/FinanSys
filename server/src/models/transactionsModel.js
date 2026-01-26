@@ -60,8 +60,8 @@ async function find(){
 }
 
 async function create(clientOrData, maybeData){
-    client = null
-    data   = null
+    let client = null
+    let data   = null
     if(maybeData){
         client = clientOrData
         data   = maybeData
@@ -85,7 +85,7 @@ async function create(clientOrData, maybeData){
 
     const params = [user_id, category_id, bank_id, card_id, description, amount, transaction_type, fixed_variable, payment_method, start_date, end_date, created_by, updated_by]
 
-    const sql = `INSERT INTO transactions (user_id, category_id, bank_id, card_id, description, amount, transaction_type, fixed_variable, payment_method, start_date, end_date, created_by, updated_by) VALUES $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13 RETURNING id, user_id, category_id, bank_id, card_id, description, amount, transaction_type, fixed_variable, payment_method, start_date, end_date, created_at, created_by, updated_at, updated_by`
+    const sql = `INSERT INTO transactions (user_id, category_id, bank_id, card_id, description, amount, transaction_type, fixed_variable, payment_method, start_date, end_date, created_by, updated_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id, user_id, category_id, bank_id, card_id, description, amount, transaction_type, fixed_variable, payment_method, start_date, end_date, created_at, created_by, updated_at, updated_by`
 
     const { rows } = await db.query(sql, params)
 
@@ -96,8 +96,9 @@ async function update(id, patch) {
     const keys = Object.keys(patch)
     if(keys.length === 0) findById(id)
 
-    const allowed = ('user_id', 'category_id', 'bank_id', 'card_id', 'description', 'amount', 'transaction_type', 'fixed_variable', 'payment_method', 'start_date', 'end_date', 'updated_by')
-    const safeKeys = keys.filter(allowed)
+    const allowed = ['user_id', 'category_id', 'bank_id', 'card_id', 'description', 'amount', 'transaction_type', 'fixed_variable', 'payment_method', 'start_date', 'end_date', 'updated_by']
+
+    const safeKeys = keys.filter(x => allowed.includes(x))
     if(safeKeys.length === 0) findById(id)
 
     const sets = safeKeys.map((v,i) => `${v} = $${i+2}`).join(`, `)
@@ -106,7 +107,7 @@ async function update(id, patch) {
     const sql = `UPDATE transactions SET ${sets} WHERE id = $1 RETURNING id, user_id, category_id, bank_id, card_id, description, amount, transaction_type, fixed_variable, payment_method, start_date, end_date, created_at, created_by, updated_at, updated_by`
     const { rows } = await db.query(sql,[id, ...values])
 
-    return MapRowToPublic(rows)
+    return MapRowToPublic(rows[0])
 }
 
 async function remove(id) {

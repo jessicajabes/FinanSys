@@ -53,7 +53,7 @@ async function create(clientOrData, maybeData) {
     const updated_by = data.updated_by
 
     const params = [name, type, created_by, updated_by]
-    const sql = `INSERT INTO categories (name, type, created_by, updated_by) VALUES $1, $2, $3, $4 RETURNING id, name, type, created_by, updated_by, created_at, updated_at`
+    const sql = `INSERT INTO categories (name, type, created_by, updated_by) VALUES ($1, $2, $3, $4) RETURNING id, name, type, created_by, updated_by, created_at, updated_at`
     
     const result = client ? await client.query(sql, params) : await db.query(sql, params)
 
@@ -70,7 +70,7 @@ async function update(id, patch){
     const sets = safeKeys.map((k, i) => `${k} = $${i + 2}`).join(', ')
     const values = safeKeys.map(k => patch[k])
 
-    const sql = `UPDATE cards SET ${sets} WHERE id = $1 RETURNING id, name, type, created_by, updated_by, created_at, updated_at`
+    const sql = `UPDATE categories SET ${sets} WHERE id = $1 RETURNING id, name, type, created_by, updated_by, created_at, updated_at`
     const { rows } = await db.query(sql, [id, ...values])
 
     return MapRowToPublic(rows[0] || null)

@@ -1,22 +1,14 @@
-import db from '../config/database.js'
-import transactionsModel  from '../models/transactionsModel.js'
+import transactionsService from '../services/transactionsService.js'
+import transactionsModel from '../models/transactionsModel.js'
+
 
 const create = async (req,res)=>{
-    let client = null
     try{
-        client = await db.pool.connect()
-        await client.query('BEGIN')
-        const transaction = await transactionsModel.create(client, req.body)
-        await client.query('COMMIT')
-        return res.status(201).json({ message: 'Transação criada com sucesso',
-            transaction: transaction
-        })
+        const result = await transactionsService.createTransactionWithMovements(req.body)
+        return res.status(201).json({ message: 'Transação criada com sucesso', transaction: result.transaction, movements: result.movements })
     }catch (error){
-        if(client) await client.query('ROLLBACK')
         console.error('Erro ao criar transação', error)
         return res.status(500).json({ error:'Erro interno do servidor' })
-    }finally{
-        if(client) client.release()
     }
 }
 const getById = async (req,res)=>{

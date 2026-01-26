@@ -1,22 +1,20 @@
 import './styles.scss'
-import {Routes, Route } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { Button } from '../../components/Button/Button.tsx'
-import Expenses from '../../pages/Expenses/Expenses.tsx'
-import Income from '../../pages/Income/Income.tsx'
+import { TransactionProvider } from '../../contexts/TransactionContext.tsx'
 
+export default function Dashboard() {
+    const navigate = useNavigate()
+    const goIncome = () => navigate('income')
+    const goExpenses = () => navigate('expenses')
 
-export default function Dashboard(){
-    return( 
-        <>
-        <Routes>
-            <Route path="/expenses" element={<Expenses/>}/>
-            <Route path="/income" element={<Income/>}/>
-        </Routes>
-        <div className='buttons'>
-            <Button>Receitas</Button>
-            <Button>Despesas</Button>
-        </div>
-    </>        
-
+    return (
+        <TransactionProvider>
+            <div className='buttons'>
+                <Button onClick={goIncome}>Receitas</Button>
+                <Button onClick={goExpenses}>Despesas</Button>
+            </div>
+            <Outlet />
+        </TransactionProvider>
     )
 }
