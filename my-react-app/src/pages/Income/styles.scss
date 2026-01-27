@@ -1,0 +1,64 @@
+.table{
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+    width: 80%;
+        
+}
+
+.table tbody{
+    margin-bottom: 10px;
+}
+
+.table{
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+    width: 80%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.table tr th{
+    text-align: center;
+    padding: 5px;
+}
+
+.table th,
+.table td{
+    padding: 8px 12px;
+    //border: 1px solid var(--gray-300);
+}
+
+.income-item{
+    transition: 1s;
+    background-color: var(--card-background);
+    border-radius: 5px;
+}
+
+.income-item:hover{
+  transform: scale(1.02);
+}
+
+/* Largura proporcional de cada coluna */
+.table th:nth-child(1){ width: 24%;text-align: left;} /* Descrição */
+.table th:nth-child(2){ width: 10%;text-align: center;} /* Valor */
+.table th:nth-child(3){ width: 12%;text-align: left;} /* Banco */
+.table th:nth-child(4){ width: 10%;text-align: left;} /* Cartão */
+.table th:nth-child(5){ width: 12%;text-align: center;} /* Categoria */
+.table th:nth-child(6){ width: 8%;text-align: center;} /* Data */
+.table th:nth-child(7){ width: 8%;text-align: center;} /* Fixo/Variável */
+.table th:nth-child(8){ width: 8%;text-align: center;} /* Data Final */
+.table th:nth-child(9){ width: 8%;text-align: center;} /* Método de Pagamento */
+
+
+/* Largura proporcional de cada coluna */
+.table td:nth-child(1){text-align: left;} /* Descrição */
+.table td:nth-child(2){text-align: center;} /* Valor */
+.table td:nth-child(3){text-align: left;} /* Banco */
+.table td:nth-child(4){text-align: left;} /* Cartão */
+.table td:nth-child(5){text-align: center;} /* Categoria */
+.table td:nth-child(6){text-align: center;} /* Fixo/Variável */
+.table td:nth-child(7){text-align: center;}  /* Data */
+.table td:nth-child(8){text-align: center;} /* Data Final */
+.table td:nth-child(9){text-align: center;} /* Método de Pagamento */

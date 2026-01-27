@@ -25,6 +25,7 @@ import db from '../config/database.js'
  * @property {number}         user_id
  * @property {number}         category_id
  * @property {number}         bank_id
+ * @property {string}         category_description
  * @property {string}         bank_description
  * @property {number}         card_id
  * @property {string}         card_description
@@ -43,8 +44,8 @@ import db from '../config/database.js'
 
 function MapRowToPublic(row){
     if (!row) return null
-    const {id, user_id, category_id, bank_id, bank_description, card_id, card_description, description, amount, transaction_type, fixed_variable, payment_method, start_date, end_date, created_at, created_by, updated_at, updated_by} = row
-    return {id, user_id, category_id, bank_id,bank_description,  card_id,card_description, description, amount, transaction_type, fixed_variable, payment_method, start_date, end_date, created_at, created_by, updated_at, updated_by}
+    const {id, user_id, category_id, category_description, bank_id, bank_description, card_id, card_description, description, amount, transaction_type, fixed_variable, payment_method, start_date, end_date, created_at, created_by, updated_at, updated_by} = row
+    return {id, user_id, category_id, category_description, bank_id,bank_description,  card_id,card_description, description, amount, transaction_type, fixed_variable, payment_method, start_date, end_date, created_at, created_by, updated_at, updated_by}
 }
 
 async function findById(id){
@@ -55,7 +56,7 @@ async function findById(id){
 }
 
 async function findIncomeByUser(user_id){
-    const sql =  "SELECT f.id, f.category_id, f.bank_id, b.description as bank_description, f.card_id,c.description as card_description, f.description, f.amount, f.fixed_variable, f.payment_method, f.start_date, f.end_date, f.created_at,	f.created_by, f.updated_at,	f.updated_by FROM transactions f left join banks b on b.id = f.bank_id left join cards c on c.id = f.card_id where f.transaction_type='R' and f.user_id=$1"
+    const sql =  "SELECT f.id, f.category_id, c2.name as category_description, f.bank_id, b.description as bank_description, f.card_id, c.description as card_description, f.description, f.amount, f.fixed_variable, f.payment_method, f.start_date, f.end_date, f.created_at,	f.created_by, f.updated_at,	f.updated_by FROM transactions f left join banks b on b.id = f.bank_id left join cards c on c.id = f.card_id left join categories c2 on c2.id= f.category_id where f.transaction_type='R' and f.user_id=$1"
     const { rows } = await db.query(sql, [user_id])
 
     return MapRowToPublic(rows[0])

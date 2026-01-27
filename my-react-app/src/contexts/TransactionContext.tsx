@@ -1,16 +1,18 @@
 import api from '../services/api';
 import { toast } from '../utils/toast';
 import { useState, createContext, type ReactNode, useCallback } from 'react';
+import { useAuth } from './useAuth'
 
 interface Transaction {
     id: number;
-    user_id: number | null;
     category_id: number;
+    category_description: string | null;
     bank_id: number;
+    bank_description: string;
     card_id: number | null;
+    card_description: string | null;
     description: string;
     amount: string;
-    transaction_type: string;
     fixed_variable: string;
     payment_method: string;
     start_date: string | null;
@@ -36,13 +38,29 @@ interface TransactionProviderProps {
 export function TransactionProvider({ children }: TransactionProviderProps) {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(false);
+    const { user } = useAuth()
 
     const loadTransactions = useCallback(async () => {
+        console.log('loadTransactions chamado, user:', user);
         setLoading(true);
         try {
-            const response = await api.get('/auth/transaction');
-            const list = response?.data?.transaction ?? [];
-            setTransactions(Array.isArray(list) ? list : []);
+            if (user) {
+                //console.log('Chamando API para usuário:', user.id);
+                const response = await api.get(`/auth/transaction_income/${user.id}`);
+                //console.log('Resposta da API:', response.data);
+                const transaction = response?.data?.transaction;
+                //console.log('Transação extraída:', transaction);
+                if (transaction) {
+                    const transArray = Array.isArray(transaction) ? transaction : [transaction];
+                    setTransactions(transArray);
+                } else {
+                    setTransactions([]);
+                }
+            } else {
+                console.log('Usuário não autenticado');
+                toast.error('Usuário não autenticado.');
+                return;
+            }
         } catch (error: unknown) {
             const err = error as { response?: { data?: Record<string, unknown> } };
             const serverData = err?.response?.data as Record<string, unknown> | undefined;
@@ -56,7 +74,7 @@ export function TransactionProvider({ children }: TransactionProviderProps) {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [user]);
 
     const contextValue: TransactionContextData = {
         transactions,
