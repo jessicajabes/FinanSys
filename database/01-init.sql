@@ -1,5 +1,14 @@
 SET client_encoding = 'UTF8';
 
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'fin_user') THEN
+    CREATE ROLE fin_user LOGIN PASSWORD 'j355ic4';
+  END IF;
+END
+$$;
+
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'fin_user') THEN
@@ -17,9 +26,18 @@ BEGIN
 END
 $$;
 
+-- criar DB somente se não existir (bloco PL/pgSQL seguro)
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'finansys_db') THEN
+    EXECUTE 'CREATE DATABASE finansys_db OWNER fin_user';
+  END IF;
+END
+$$;
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   username VARCHAR(100) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
@@ -31,8 +49,8 @@ CREATE TABLE users (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_users_username ON users(username);
-CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -46,14 +64,14 @@ $$ language 'plpgsql';
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_users_updated_at') THEN
-    EXECUTE $$CREATE TRIGGER update_users_updated_at
+    EXECUTE 'CREATE TRIGGER update_users_updated_at
       BEFORE UPDATE ON users
-      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();$$;
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()';
   END IF;
 END
 $$;
 
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
   id SERIAL PRIMARY KEY,
   name VARCHAR(50) UNIQUE NOT NULL, --MERCADO, REFEIÇÃO, LAZER, ALUGUEL, STREAMING, VIAGEM
   type VARCHAR(2) NOT NULL,  -- R= RECEITA , D= DESPESA
@@ -63,7 +81,7 @@ CREATE TABLE categories (
   updated_by INTEGER
 );
 
-CREATE INDEX idx_categories_name ON categories(name);
+CREATE INDEX IF NOT EXISTS idx_categories_name ON categories(name);
 
 ALTER TABLE categories
   ADD CONSTRAINT fk_categories_created_by FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL;
@@ -74,14 +92,14 @@ ALTER TABLE categories
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_categories_updated_at') THEN
-    EXECUTE $$CREATE TRIGGER update_categories_updated_at
+    EXECUTE 'CREATE TRIGGER update_categories_updated_at
       BEFORE UPDATE ON categories
-      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();$$;
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()';
   END IF;
 END
 $$;
 
-CREATE TABLE banks (
+CREATE TABLE IF NOT EXISTS banks (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   balance NUMERIC(10,2), -- É O SALDO ATUAL , r$1000,00
@@ -92,20 +110,20 @@ CREATE TABLE banks (
   updated_by INTEGER
 );
 
-CREATE INDEX idx_banks_user_id ON banks(user_id);
+CREATE INDEX IF NOT EXISTS idx_banks_user_id ON banks(user_id);
 
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_banks_updated_at') THEN
-    EXECUTE $$CREATE TRIGGER update_banks_updated_at
+    EXECUTE 'CREATE TRIGGER update_banks_updated_at
       BEFORE UPDATE ON banks
-      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();$$;
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()';
   END IF;
 END
 $$;
 
 
-CREATE TABLE cards (
+CREATE TABLE IF NOT EXISTS cards (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   description VARCHAR(100),-- CARTÃO DE CRÉDITO FINAL 5556
@@ -116,20 +134,20 @@ CREATE TABLE cards (
   updated_by INTEGER
 );
 
-CREATE INDEX idx_cards_user_id ON cards(user_id);
+CREATE INDEX IF NOT EXISTS idx_cards_user_id ON cards(user_id);
 
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_cards_updated_at') THEN
-    EXECUTE $$CREATE TRIGGER update_cards_updated_at
+    EXECUTE 'CREATE TRIGGER update_cards_updated_at
       BEFORE UPDATE ON cards
-      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();$$;
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()';
   END IF;
 END
 $$;
 
 
-CREATE TABLE transactions (
+CREATE TABLE IF NOT EXISTS transactions (
   id SERIAL PRIMARY KEY,
   category_id INTEGER,
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
@@ -148,7 +166,7 @@ CREATE TABLE transactions (
   updated_by INTEGER
 );
 
-CREATE INDEX idx_transactions_user_id ON transactions(user_id);
+CREATE INDEX IF NOT EXISTS idx_transactions_user_id ON transactions(user_id);
 
 ALTER TABLE transactions
   ADD CONSTRAINT fk_transactions_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL;
@@ -162,15 +180,15 @@ ALTER TABLE transactions
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_transactions_updated_at') THEN
-    EXECUTE $$CREATE TRIGGER update_transactions_updated_at
+    EXECUTE 'CREATE TRIGGER update_transactions_updated_at
       BEFORE UPDATE ON transactions
-      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();$$;
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()';
   END IF;
 END
 $$;
 
 
-CREATE TABLE movements_calculations (
+CREATE TABLE IF NOT EXISTS movements_calculations (
   id SERIAL PRIMARY KEY,
   transactions_id INTEGER,
   month_movement DATE,
@@ -186,9 +204,9 @@ ALTER TABLE movements_calculations
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_movements_calculations_updated_at') THEN
-    EXECUTE $$CREATE TRIGGER update_movements_calculations_updated_at
+    EXECUTE 'CREATE TRIGGER update_movements_calculations_updated_at
       BEFORE UPDATE ON movements_calculations
-      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();$$;
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()';
   END IF;
 END
 $$;
