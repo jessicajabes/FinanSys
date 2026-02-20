@@ -18,3 +18,9 @@
     transform: scale(1.05);
     background-color: var(--gray-700);
 }
+
+@media (max-width: 700px){
+    .button{
+        font-size: 13px;
+    }    
+}

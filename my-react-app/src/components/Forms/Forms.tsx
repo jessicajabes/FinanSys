@@ -7,11 +7,13 @@ interface FormsProps{
     onSubmit?: React.FormEventHandler<HTMLFormElement>
     titleButton?: string
     disableButton?: boolean
+    onCancel?: () => void
+    isModal?: boolean
 }
 
-export function Forms({children, title, onSubmit, titleButton, disableButton}: FormsProps ){
+export function Forms({children, title, onSubmit, titleButton, disableButton, onCancel, isModal = false}: FormsProps ){
     return(
-        <div className='formContainer'>
+        <div className={`formContainer ${isModal ? 'modal' : 'page'}`}>
 
             <div className="title">{title}</div>
 
@@ -19,7 +21,12 @@ export function Forms({children, title, onSubmit, titleButton, disableButton}: F
 
                 {children}
                 
-                <Button type="submit" disabled={disableButton}>{titleButton}</Button>
+                <div className="form-buttons">
+                    <Button type="submit" disabled={disableButton}>{titleButton}</Button>
+                    {onCancel && (
+                        <Button type="button" onClick={onCancel} className="cancel-button">Cancelar</Button>
+                    )}
+                </div>
 
             </form>
         </div>

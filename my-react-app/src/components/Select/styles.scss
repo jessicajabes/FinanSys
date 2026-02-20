@@ -1,0 +1,124 @@
+.select-container {
+    position: relative;
+    width: 100%;
+}
+
+.select-container:focus {
+  background-color: transparent;
+}
+
+
+
+.select-input {
+    height: 40px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border: none;
+    padding: 8px 8px;
+    border-radius: 8px;
+    background-color: transparent;
+    font-size: 16px;
+    font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    -webkit-box-shadow: 0 0 0 30px var(--gray-900) inset;
+    color: var(--text-default);
+    cursor: pointer;
+
+    &:-webkit-autofill {
+        color: var(--text-default) !important;
+        background-color: transparent !important;
+    }
+
+    &:-webkit-autofill::first-line {
+        color: var(--text-default) !important;
+    }
+
+    &:focus {
+        background-color: transparent;
+    }
+
+    &:disabled {
+        background-color: transparent;
+    }
+    
+    input {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        padding: 0;
+        color: var(--text-default);
+        font-size: 16px;
+        font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+        
+        &::placeholder {
+            color: var(--gray-400);
+        }
+
+        &:focus {
+            background-color: transparent;
+        }
+
+        &:disabled {
+            background-color: transparent;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        &:-webkit-autofill {
+            color: var(--text-default) !important;
+            background-color: transparent !important;
+        }
+
+        &:-webkit-autofill::first-line {
+            color: var(--text-default) !important;
+        }
+    }
+
+    .arrow {
+        font-size: 12px;
+        color: var(--text-default);
+        transition: transform 0.2s;
+
+        &.open {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    background-color: var(--gray-900);
+    border: 1px solid var(--text-default);
+    border-radius: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 100;
+
+    .option {
+        padding: 10px 12px;
+        cursor: pointer;
+        color: var(--text-default);
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        &.selected {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-default);
+        }
+
+        &.loading,
+        &.empty {
+            cursor: not-allowed;
+            color: var(--gray-400);
+            padding: 20px 12px;
+            text-align: center;
+        }
+    }
+}

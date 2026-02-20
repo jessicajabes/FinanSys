@@ -59,7 +59,7 @@ async function findIncomeByUser(user_id){
     const sql =  "SELECT f.id, f.category_id, c2.name as category_description, f.bank_id, b.description as bank_description, f.card_id, c.description as card_description, f.description, f.amount, f.fixed_variable, f.payment_method, f.start_date, f.end_date, f.created_at,	f.created_by, f.updated_at,	f.updated_by FROM transactions f left join banks b on b.id = f.bank_id left join cards c on c.id = f.card_id left join categories c2 on c2.id= f.category_id where f.transaction_type='R' and f.user_id=$1"
     const { rows } = await db.query(sql, [user_id])
 
-    return MapRowToPublic(rows[0])
+     return rows.map(MapRowToPublic)
 }
 
 async function find(){

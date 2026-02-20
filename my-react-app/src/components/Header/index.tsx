@@ -12,6 +12,7 @@ import Logo from '../Logo/Logo'
 export default function Header(){
     const { signOut } = useAuth();
     const navigate = useNavigate();
+    const goDash = () => navigate('Dashboard')
 
     useEffect(() => {
         document.title = 'FinanSys'
@@ -26,7 +27,7 @@ export default function Header(){
 
     return(
         <header className="app-header">
-            <div className='logo'><Logo/></div>
+            <button onClick={goDash} className='logo'><Logo/></button>
 
             <div className="buttons">
                 <button onClick={toggleTheme} className="light-dark">{theme === 'sun' ? <Moon/> : <Sun/>}</button>

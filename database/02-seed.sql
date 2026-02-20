@@ -137,5 +137,3 @@ $$;
 -- • Este seed NÃO cria usuários. Ele assume que o usuário com id = 10 já existe (created_by/updated_by referenciam 10).
 -- • Para executar no container:
 --   docker exec -i finansys-bd psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f /docker-entrypoint-initdb.d/02-seed.sql
-
-

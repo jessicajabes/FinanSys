@@ -5,6 +5,7 @@ interface ButtonProps {
     type?: "button" | "submit" | "reset";
     disabled?: boolean;
     onClick?: () => void;
+    display?: string;
 }
 
 export function Button({children, type = "button", disabled = false, onClick}: ButtonProps){

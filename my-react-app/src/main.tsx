@@ -8,10 +8,14 @@ import { ThemeProvider } from './contexts/ThemeContext'
 
 
 createRoot(document.getElementById('root')!).render(
-  
   <StrictMode>
     <ThemeProvider>
       <App />
-    </ThemeProvider>  
+    </ThemeProvider>
   </StrictMode>,
 )
+
+// HMR (Vite)
+if (import.meta.hot) {
+  import.meta.hot.accept()
+}

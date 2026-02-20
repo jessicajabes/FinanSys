@@ -1,13 +1,46 @@
-.table{
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 50px;
-    width: 80%;
-        
-}
 
 .table tbody{
     margin-bottom: 10px;
+}
+
+@media (max-width: 1000px) {
+    .table{
+        min-width: 95%;
+      //  border: 1px solid #ccc;
+    }
+
+    /* Ocultar colunas em telas pequenas */
+    .table th:nth-child(4),
+    .table td:nth-child(4),
+    .table th:nth-child(5),
+    .table td:nth-child(5),
+    .table th:nth-child(8),
+    .table td:nth-child(8),
+    .table th:nth-child(9),
+    .table td:nth-child(9) {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .table{
+        min-width: 95%;
+      //  border: 1px solid #ccc;
+    }
+
+    /* Ocultar colunas em telas pequenas */
+    .table th:nth-child(4),
+    .table td:nth-child(4),
+    .table th:nth-child(5),
+    .table td:nth-child(5),
+    .table th:nth-child(6),
+    .table td:nth-child(6),
+    .table th:nth-child(8),
+    .table td:nth-child(8),
+    .table th:nth-child(9),
+    .table td:nth-child(9) {
+        display: none;
+    }
 }
 
 .table{
@@ -17,6 +50,7 @@
     width: 80%;
     table-layout: fixed;
     border-collapse: collapse;
+
 }
 
 .table tr th{
@@ -41,24 +75,32 @@
 }
 
 /* Largura proporcional de cada coluna */
-.table th:nth-child(1){ width: 24%;text-align: left;} /* Descrição */
-.table th:nth-child(2){ width: 10%;text-align: center;} /* Valor */
-.table th:nth-child(3){ width: 12%;text-align: left;} /* Banco */
-.table th:nth-child(4){ width: 10%;text-align: left;} /* Cartão */
-.table th:nth-child(5){ width: 12%;text-align: center;} /* Categoria */
-.table th:nth-child(6){ width: 8%;text-align: center;} /* Data */
-.table th:nth-child(7){ width: 8%;text-align: center;} /* Fixo/Variável */
-.table th:nth-child(8){ width: 8%;text-align: center;} /* Data Final */
-.table th:nth-child(9){ width: 8%;text-align: center;} /* Método de Pagamento */
+.table th:nth-child(2){ width: 15%;text-align: center;} /* Descrição */
+.table th:nth-child(3){ width: 10%;text-align: center;} /* Valor */
+.table th:nth-child(4){ width: 12%;text-align: center;} /* Banco */
+.table th:nth-child(5){ width: 10%;text-align: center;} /* Cartão */
+.table th:nth-child(6){ width: 12%;text-align: center;} /* Categoria */
+.table th:nth-child(7){ width: 10%;text-align: center;} /* Fixo/Variável */
+.table th:nth-child(8){ width: 10%;text-align: center;} /* Data 1ª parcela */
+.table th:nth-child(9){ width: 10%;text-align: center;} /* Data Final */
+.table th:nth-child(10){ width: 10%;text-align: center;} /* Método de Pagamento */
+.table th:nth-child(1){ width: 4%;text-align: center;} /* Ações */
 
 
 /* Largura proporcional de cada coluna */
-.table td:nth-child(1){text-align: left;} /* Descrição */
-.table td:nth-child(2){text-align: center;} /* Valor */
-.table td:nth-child(3){text-align: left;} /* Banco */
-.table td:nth-child(4){text-align: left;} /* Cartão */
-.table td:nth-child(5){text-align: center;} /* Categoria */
-.table td:nth-child(6){text-align: center;} /* Fixo/Variável */
-.table td:nth-child(7){text-align: center;}  /* Data */
-.table td:nth-child(8){text-align: center;} /* Data Final */
-.table td:nth-child(9){text-align: center;} /* Método de Pagamento */
+.table td:nth-child(2){text-align: center;} /* Descrição */
+.table td:nth-child(3){text-align: center;} /* Valor */
+.table td:nth-child(4){text-align: center;} /* Banco */
+.table td:nth-child(5){text-align: center;} /* Cartão */
+.table td:nth-child(6){text-align: center;} /* Categoria */
+.table td:nth-child(7){text-align: center;} /* Fixo/Variável */
+.table td:nth-child(8){text-align: center;} /* Data 1ª parcela */
+.table td:nth-child(9){text-align: center;} /* Data Final */
+.table td:nth-child(10){text-align: center;} /* Método de Pagamento */
+.table td:nth-child(1){text-align: center;} /* Ações */
+
+.buttonNovo{
+    width: 13%;
+    margin-top: 15px;
+    margin-left: 20px;
+}

@@ -7,12 +7,12 @@ export default defineConfig({
   server: {
     // bind to all interfaces so the container is reachable from host
     host: '0.0.0.0',
-    // HMR settings: force the client to connect to localhost (host machine)
+    port: 5173,
+    // HMR settings
     hmr: {
-      // host.docker.internal resolves to the host machine from inside Docker Desktop on Windows
-      host: 'host.docker.internal',
+      host: 'localhost',
       protocol: 'ws',
-      clientPort: 5173,
+      port: 5173,
     },
     // use polling to make file change events reliable on Docker for Windows
     watch: {

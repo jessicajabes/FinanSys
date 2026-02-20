@@ -1,17 +1,23 @@
-.sign{
+.sign {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	justify-content: center;
+	min-height: calc(100vh - 200px);
+	padding: 40px 20px;
+	gap: 20px;
 }
 
-/* O link ficará logo abaixo do formulário. Ajuste o margin-top se quiser mais/menos espaço */
-.sign .link{
-	margin-top: 1rem; 
+.sign .link {
+	margin-top: 10px;
 	color: var(--color-primary);
 	text-decoration: none;
 	font-size: 0.95rem;
+	font-weight: 500;
+	transition: all 0.3s ease;
 }
 
-.sign .link:hover{
+.sign .link:hover {
 	text-decoration: underline;
+	opacity: 0.8;
 }
